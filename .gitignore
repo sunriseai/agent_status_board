@@ -1,0 +1,27 @@
+# Python caches
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging/build output
+*.egg-info/
+build/
+dist/
+
+# Runtime/local data
+data/
+*.log
+
+# Local agent/editor settings
+.claude/settings.local.json
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

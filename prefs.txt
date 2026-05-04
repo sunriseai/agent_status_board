@@ -1,0 +1,20 @@
+# Agent Status Surface preferences.
+# Format: key=value
+
+# Browser refresh interval in seconds. Values below 0.25 are raised to 0.25.
+refresh_rate_seconds=1
+
+# Local HTTP port used by make dev / python server.py.
+port=5747
+
+# Keep false for local-only access. Set true to bind to 0.0.0.0 so other
+# machines on your network can connect.
+allow_remote=false
+
+# Number of items requested by the browser for each view.
+board_limit=100
+stream_limit=50
+
+# Board columns to show, in order. Valid statuses are:
+# proposed, in_progress, blocked, done
+board_statuses=in_progress,blocked,done

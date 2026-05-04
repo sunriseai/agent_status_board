@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-status-board"
+version = "0.1.0"
+description = "Local task-level status board for coding agents."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "Flask>=3.0,<4",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+]
+
+[project.scripts]
+agent-status-board = "agent_status_board.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent_status_board*"]
+
+[tool.setuptools.package-data]
+agent_status_board = ["static/*.svg"]
