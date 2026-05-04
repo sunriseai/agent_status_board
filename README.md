@@ -1,8 +1,14 @@
 <p align="center">
-  <img src="cube.svg" alt="Agent Status Board icon" width="48" height="48">
+  <img src="cube.svg" alt="Agent Status Board icon" width="96" height="96">
 </p>
 
 # Agent Status Board
+
+<p align="center">
+  <img src="sample.png" alt="Agent Status Board" width="480">
+</p>
+
+
 
 Local status board for observing task-level coding agent activity. It supports
 Codex and Claude Code by having agents post task-sized status updates to the
