@@ -20,6 +20,31 @@ board as long as their working context includes the reporting rules in
 
 ## Run
 
+One-line install and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sunriseai/agent_status_board/main/scripts/run.sh | sh
+```
+
+That command creates or reuses `~/.agent-status-board/.venv`, installs the
+latest public GitHub version and its Python dependencies, then starts
+`agent-status-board`. It installs from the GitHub source archive, so it does not
+require a local `git` command. It requires Python 3.10 or newer.
+
+To pass CLI options through the one-liner:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sunriseai/agent_status_board/main/scripts/run.sh | sh -s -- --port 6000
+```
+
+For an inspect-first flow:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/sunriseai/agent_status_board/main/scripts/run.sh
+less run.sh
+sh run.sh
+```
+
 From a checkout, install for local development:
 
 ```bash
