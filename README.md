@@ -14,11 +14,10 @@ Local status board for observing task-level coding agent activity. It supports
 Codex and Claude Code by having agents post task-sized status updates to the
 same local HTTP API.
 
-Codex Desktop is the primary target. Codex CLI and Claude Code can also use the
-board as long as their working context includes the reporting rules in
+Codex Desktop, Codex CLI and Claude Code will work as their working context includes the reporting rules in
 `STATUS_RULES.md`.
 
-## Run
+## How to Run
 
 One-line install and run:
 
@@ -26,10 +25,97 @@ One-line install and run:
 curl -fsSL https://raw.githubusercontent.com/sunriseai/agent_status_board/main/scripts/run.sh | sh
 ```
 
+Then point your browser to http://localhost:5747
+
 That command creates or reuses `~/.agent-status-board/.venv`, installs the
 latest public GitHub version and its Python dependencies, then starts
 `agent-status-board`. It installs from the GitHub source archive, so it does not
 require a local `git` command. It requires Python 3.10 or newer.
+
+You can also clone the repo and run using the Makefile.
+
+
+## Use With Codex
+
+Start the board first, copy `STATUS_RULES.md` into that repo or reference it by absolute path in your
+prompt.  Then ask Codex to follow `STATUS_RULES.md` for the task.
+The agent should report task-level actions, not every tool call.
+
+You can grab `STATUS_RULES.md` here:
+```text
+https://github.com/sunriseai/agent_status_board/blob/main/STATUS_RULES.md
+```
+
+Reports can include:
+
+- `repo`: stable short repository or workspace name, such as `astatus`
+- `session_id`: stable ID for one Codex working session
+- `task_id`: stable slug for related status reports about the same task
+
+Use `repo` when agents from multiple repositories post to the same board. Keep
+it short and stable, preferably the repository directory name. Do not use a full
+local path. If `repo` is omitted, blank, or `default`, it is not shown in the UI.
+The `/events` and `/tasks` endpoints accept an optional `repo` query parameter
+for filtering.
+
+### Codex Sandbox Note
+
+Codex may ask for approval the first time it posts to the local status server
+because localhost HTTP requests are treated as network access by the shell
+sandbox. This works best with Codex Auto-Review enabled, or with a persisted
+approval for the scoped local status-report command, such as:
+
+```text
+curl -s -X POST http://localhost:5747/report
+```
+
+Without Auto-Review or a persisted approval, Codex may ask before each status
+`curl`. There is no server-side workaround for this; the request is still local
+HTTP network access from the sandbox's perspective. If approval is denied or
+unavailable, Codex should state that status reporting failed and continue only
+if best-effort reporting is acceptable.
+
+Approval bootstrap limitation: if Codex has not yet been approved to post to the
+local status server, it may be unable to report that it is blocked on that same
+approval. In that case, the blockage appears in the chat or approval UI rather
+than on the board. For reliable `blocked` reporting, enable Auto-Review or
+persist approval for the scoped local status-report `curl`.
+
+## Use With Claude Code
+
+Start the board first, then open Claude Code in a project that has status
+reporting instructions.
+
+### Set up your repos
+
+To have Claude Code report activity from another project to the same local
+board, create a `CLAUDE.md` or add to an existing one:
+
+```markdown
+## Status Reporting
+
+Follow the rules in `/path/to/astatus/STATUS_RULES.md` while working in this repo.
+
+Key points:
+- Post to `http://localhost:5747/report` before starting any task-sized action
+- Use `repo`: `<your-repo-name>`, a stable `session_id` for this session, and a slug `task_id` per task
+- Report `in_progress`, `done`, `blocked`, and direction changes, not every tool call
+- If the server is unavailable, say so and continue only if the user allows best-effort reporting
+```
+
+Replace `/path/to/astatus/STATUS_RULES.md` with the actual path, or copy the
+contents of `STATUS_RULES.md` inline. Set `repo` to a short stable name, usually
+the repository directory name, so cards from different projects are
+distinguishable on the board.
+
+### Global Claude Code Setup
+
+To report from every Claude Code session regardless of project, add the status
+reporting rules to your global `~/.claude/CLAUDE.md` instead. Use `repo` in each
+report so the board can tell projects apart.
+
+
+## Additional Runtime Details
 
 To pass CLI options through the one-liner:
 
@@ -155,100 +241,6 @@ Set `AGENT_STATUS_PREFS=/path/to/prefs.txt` to use a different preferences file.
 If you change the port or base URL, update `STATUS_RULES.md` so agents keep
 posting reports to the correct `/report` endpoint.
 
-## Use With Codex
-
-Start the board first, then ask Codex to follow `STATUS_RULES.md` for the task.
-The agent should report task-level actions, not every tool call.
-
-For this repo, `STATUS_RULES.md` is already in the checkout. For other repos,
-copy `STATUS_RULES.md` into that repo or reference it by absolute path in your
-prompt. If installed from Git, the source rules are available from:
-
-```text
-https://github.com/sunriseai/agent_status_board/blob/main/STATUS_RULES.md
-```
-
-Reports can include:
-
-- `repo`: stable short repository or workspace name, such as `astatus`
-- `session_id`: stable ID for one Codex working session
-- `task_id`: stable slug for related status reports about the same task
-
-Use `repo` when agents from multiple repositories post to the same board. Keep
-it short and stable, preferably the repository directory name. Do not use a full
-local path. If `repo` is omitted, blank, or `default`, it is not shown in the UI.
-The `/events` and `/tasks` endpoints accept an optional `repo` query parameter
-for filtering.
-
-### Codex Sandbox Note
-
-Codex may ask for approval the first time it posts to the local status server
-because localhost HTTP requests are treated as network access by the shell
-sandbox. This works best with Codex Auto-Review enabled, or with a persisted
-approval for the scoped local status-report command, such as:
-
-```text
-curl -s -X POST http://localhost:5747/report
-```
-
-Without Auto-Review or a persisted approval, Codex may ask before each status
-`curl`. There is no server-side workaround for this; the request is still local
-HTTP network access from the sandbox's perspective. If approval is denied or
-unavailable, Codex should state that status reporting failed and continue only
-if best-effort reporting is acceptable.
-
-Approval bootstrap limitation: if Codex has not yet been approved to post to the
-local status server, it may be unable to report that it is blocked on that same
-approval. In that case, the blockage appears in the chat or approval UI rather
-than on the board. For reliable `blocked` reporting, enable Auto-Review or
-persist approval for the scoped local status-report `curl`.
-
-## Use With Claude Code
-
-Start the board first, then open Claude Code in a project that has status
-reporting instructions.
-
-### This Repo
-
-A `CLAUDE.md` is already included. Start the server and open a Claude Code
-session in this directory. Claude Code reads `CLAUDE.md` at startup and should
-post status reports as it works.
-
-### Other Repos
-
-To have Claude Code report activity from another project to the same local
-board, create a `CLAUDE.md` or add to an existing one:
-
-```markdown
-## Status Reporting
-
-Follow the rules in `/path/to/astatus/STATUS_RULES.md` while working in this repo.
-
-Key points:
-- Post to `http://localhost:5747/report` before starting any task-sized action
-- Use `repo`: `<your-repo-name>`, a stable `session_id` for this session, and a slug `task_id` per task
-- Report `in_progress`, `done`, `blocked`, and direction changes, not every tool call
-- If the server is unavailable, say so and continue only if the user allows best-effort reporting
-```
-
-Replace `/path/to/astatus/STATUS_RULES.md` with the actual path, or copy the
-contents of `STATUS_RULES.md` inline. Set `repo` to a short stable name, usually
-the repository directory name, so cards from different projects are
-distinguishable on the board.
-
-### Global Claude Code Setup
-
-To report from every Claude Code session regardless of project, add the status
-reporting rules to your global `~/.claude/CLAUDE.md` instead. Use `repo` in each
-report so the board can tell projects apart.
-
-## Smoke Events
-
-Seed demo events into a running server:
-
-```bash
-./smoke_events.sh
-```
 
 ## Persistence
 
