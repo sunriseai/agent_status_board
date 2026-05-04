@@ -9,10 +9,9 @@
 </p>
 
 
-
-Local status board for observing task-level coding agent activity. It supports
-Codex and Claude Code by having agents post task-sized status updates to the
-same local HTTP API.
+If you've got multiple different projects running in different coding harnesses on your computer, this tool is meant to help.
+For me, I find that I start off a bunch of projects and threads -- some in Claude, many in Codex -- and I might only remember hours later, "oh yeah, i was doing something over here..." on one of them.  
+This project tells each agent "Hey, report in when you do a thing" and shows it on a *read-only* Kanban board that will let you kinda keep track of all the things.
 
 Codex Desktop, Codex CLI and Claude Code will work as their working context includes the reporting rules in
 `STATUS_RULES.md`.
