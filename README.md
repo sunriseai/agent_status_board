@@ -1,6 +1,16 @@
-# Agent Status Surface
+<p align="center">
+  <img src="cube.svg" alt="Agent Status Board icon" width="48" height="48">
+</p>
 
-Local status surface for observing task-level coding agent activity. Codex Desktop is the first target; other agents can report to the same local HTTP API.
+# Agent Status Board
+
+Local status board for observing task-level coding agent activity. It supports
+Codex and Claude Code by having agents post task-sized status updates to the
+same local HTTP API.
+
+Codex Desktop is the primary target. Codex CLI and Claude Code can also use the
+board as long as their working context includes the reporting rules in
+`STATUS_RULES.md`.
 
 ## Run
 
@@ -41,12 +51,12 @@ make dev
 
 ## Install From Git
 
-Once this repo is public, install it directly with pip:
+Install the public repo directly with pip:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python3 -m pip install "git+https://github.com/<owner>/<repo>.git"
+python3 -m pip install "git+https://github.com/sunriseai/agent_status_board.git"
 agent-status-board
 ```
 
@@ -121,7 +131,11 @@ The agent should report task-level actions, not every tool call.
 
 For this repo, `STATUS_RULES.md` is already in the checkout. For other repos,
 copy `STATUS_RULES.md` into that repo or reference it by absolute path in your
-prompt.
+prompt. If installed from Git, the source rules are available from:
+
+```text
+https://github.com/sunriseai/agent_status_board/blob/main/STATUS_RULES.md
+```
 
 Reports can include:
 
